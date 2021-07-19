@@ -47,9 +47,31 @@ struct WeatherManager {
         do {
             //allocate it to the decoded data constat and
             let decodedData = try decoder.decode(WeatherData.self, from: weatherData) //.self is used to turn WeatherData struct to a data type
-            print(decodedData.weather[0].description)
+            let id = decodedData.weather[0].id
+            print(getConditionName(weatherID: id))
         } catch {
             print(error)
+        }
+    }
+    
+    func getConditionName(weatherID: Int) -> String {
+        switch weatherID {
+        case 200...232 :
+            return "cloud.bolt"
+        case 300...321 :
+            return "cloud.drizzle"
+        case 500...599 :
+            return "cloud.rain"
+        case 600...699 :
+            return "cloud.snow"
+        case 700...799 :
+            return "cloud.fog"
+        case 800 :
+            return "sun.max"
+        case 801...899 :
+            return "smoke"
+        default:
+            return "sun.max"
         }
     }
 }
