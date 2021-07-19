@@ -1,0 +1,13 @@
+//
+//  WeatherData.swift
+//  Clima
+//
+//  Created by Tyrone Oggen on 2021/07/19.
+//  Copyright © 2021 Roney Writes Code. All rights reserved.
+//
+
+import Foundation
+
+struct WeatherData: Decodable {
+    let name: String
+}
