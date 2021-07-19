@@ -47,7 +47,7 @@ struct WeatherManager {
         do {
             //allocate it to the decoded data constat and
             let decodedData = try decoder.decode(WeatherData.self, from: weatherData) //.self is used to turn WeatherData struct to a data type
-            print(decodedData.name)
+            print(decodedData.weather[0].description)
         } catch {
             print(error)
         }
