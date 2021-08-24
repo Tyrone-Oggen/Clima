@@ -22,8 +22,10 @@ struct WeatherModel {
      the computed property which will be returned based on the id above
     */
     var conditionName: String {
+        //we use the conditionID above now instead of the api call's in the WeatherManager
         switch conditionID {
         case 200...232 :
+            //the return allocated the value based on the case statement and it's data type above
             return "cloud.bolt"
         case 300...321 :
             return "cloud.drizzle"

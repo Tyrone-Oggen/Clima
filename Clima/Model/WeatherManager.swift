@@ -79,7 +79,8 @@ struct WeatherManager {
             //Allocate the data we fetched from the API and store it within our WeatherModel that handles all weather data
             let weather = WeatherModel(conditionID: id, temperature: temp, cityName: name)
             
-            print(getConditionName(weatherID: id))
+            //Now we can simply call the conditionName as a property on the object created above
+            print(weather.temperatureString)
         } catch {
             print(error)
         }
