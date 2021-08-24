@@ -9,11 +9,13 @@
 import Foundation
 
 struct WeatherData: Decodable {
+    //To get the name item from the API response
     let name: String
     let main: Main
     let weather: [Weather]
 }
 
+//This main struct is created to be a representation of the object within an object in the API response that we can then map to the decoder
 struct Main: Decodable {
     let temp: Double
 }
