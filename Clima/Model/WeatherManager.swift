@@ -8,8 +8,14 @@
 
 import Foundation
 
+protocol WeatherManagerDelegate {
+    func didUpdateWeather(weather: WeatherModel)
+}
+
 struct WeatherManager {
     let weatherURL = "https://api.openweathermap.org/data/2.5/weather?appid=2d68ff0c565a2bb111f698e0cd4991de&units=metric"
+    
+    var delegate: WeatherManagerDelegate?
     
     func fetchWeather(cityName: String) {
         let urlString = "\(weatherURL)&q=\(cityName)"
@@ -40,8 +46,13 @@ struct WeatherManager {
                 }
                 
                 if let safeData = data {
-                    //use self to indicate to the closure that the method is found within this class
-                    self.parseJSON(weatherData: safeData)
+                    /*
+                        use self to indicate to the closure that the method is found within this class
+                        if let used because the return type of the parseJSON is now optional
+                     */
+                    if let weather = self.parseJSON(weatherData: safeData) {
+                        delegate?.didUpdateWeather(weather: weather)
+                    }
                 }
             }
             
@@ -58,8 +69,11 @@ struct WeatherManager {
      This will be where we take the JSON received from the API and convert it to a swift object that we will map to our Weather model
      
      In order to parse the data from a JSON format, we need to inform the compiler how the data is structured by making use of the weatherData struct
+     
+     The parseJSOn method is made to return the weatherModel object we made so that wherever it is called can be stored as a value
+     Weatehr model return type is made an optional to cater for if something goes wrong and it returns nil
      */
-    func parseJSON(weatherData: Data) {
+    func parseJSON(weatherData: Data) -> WeatherModel? {
         //create a decoder to decode the object received
         let decoder = JSONDecoder()
         
@@ -78,11 +92,10 @@ struct WeatherManager {
             
             //Allocate the data we fetched from the API and store it within our WeatherModel that handles all weather data
             let weather = WeatherModel(conditionID: id, temperature: temp, cityName: name)
-            
-            //Now we can simply call the conditionName as a property on the object created above
-            print(weather.temperatureString)
+            return weather
         } catch {
             print(error)
+            return nil
         }
     }
 }
@@ -104,4 +117,3 @@ func handle(data: Data?, response: URLResponse?, error: Error?) {
     }
 }
 */
-//weatehr model is made an optional to cater for if something goes wrong and it returns nil

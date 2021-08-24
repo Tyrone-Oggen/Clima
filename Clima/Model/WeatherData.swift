@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct WeatherData: Decodable {
+struct WeatherData: Codable {
     //To get the name item from the API response
     let name: String
     let main: Main
@@ -16,10 +16,10 @@ struct WeatherData: Decodable {
 }
 
 //This main struct is created to be a representation of the object within an object in the API response that we can then map to the decoder
-struct Main: Decodable {
+struct Main: Codable {
     let temp: Double
 }
 
-struct Weather: Decodable {
+struct Weather: Codable {
     let id: Int
 }
