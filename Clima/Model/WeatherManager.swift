@@ -48,10 +48,11 @@ struct WeatherManager {
                 if let safeData = data {
                     /*
                         use self to indicate to the closure that the method is found within this class
-                        if let used because the return type of the parseJSON is now optional
+                        if let used because the return type of the parseJSON method is optional
                      */
                     if let weather = self.parseJSON(weatherData: safeData) {
-                        delegate?.didUpdateWeather(weather: weather)
+                        //This is done to be able to send it to whichever view controller wants to make use of the weather data and they can do so by assiigning themselves as the delegate and using thr protocol as a data type
+                        self.delegate?.didUpdateWeather(weather: weather)
                     }
                 }
             }
@@ -70,7 +71,7 @@ struct WeatherManager {
      
      In order to parse the data from a JSON format, we need to inform the compiler how the data is structured by making use of the weatherData struct
      
-     The parseJSOn method is made to return the weatherModel object we made so that wherever it is called can be stored as a value
+     The parseJSOn method is made to return the weatherModel object we made so that wherever it is called can be stored and used
      Weatehr model return type is made an optional to cater for if something goes wrong and it returns nil
      */
     func parseJSON(weatherData: Data) -> WeatherModel? {
