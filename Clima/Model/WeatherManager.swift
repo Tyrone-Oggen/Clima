@@ -7,9 +7,11 @@
 //
 
 import Foundation
+import CoreLocation
 
 protocol WeatherManagerDelegate {
-    func didUpdateWeather(weather: WeatherModel)
+    func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel)
+    func didFailWithError(error: Error)
 }
 
 struct WeatherManager {
@@ -19,10 +21,16 @@ struct WeatherManager {
     
     func fetchWeather(cityName: String) {
         let urlString = "\(weatherURL)&q=\(cityName)"
-        performRequest(urlString: urlString)
+        performRequest(with: urlString)
     }
     
-    func performRequest(urlString: String) {
+    func fetchWeather(latitude: CLLocationDegrees, longitude: CLLocationDegrees) {
+        let urlString = "\(weatherURL)&lat=\(latitude)&lon=\(longitude)"
+        performRequest(with: urlString)
+    }
+    
+    //This allows the readability of the method, when being executed to be a little more simple instead of having performRequest(urlString: urlString) you have the above
+    func performRequest(with urlString: String) {
         /*
          1. Create URL from string using an if let becasuse the URL() returns an optional string and won't work if the url is incorrect
         */
@@ -41,7 +49,7 @@ struct WeatherManager {
              */
             let task = session.dataTask(with: url) { data, response, error in
                 if error != nil {
-                    print(error!)
+                    delegate?.didFailWithError(error: error!)
                     return //to exit out the function if there was an errror
                 }
                 
@@ -50,9 +58,9 @@ struct WeatherManager {
                         use self to indicate to the closure that the method is found within this class
                         if let used because the return type of the parseJSON method is optional
                      */
-                    if let weather = self.parseJSON(weatherData: safeData) {
+                    if let weather = self.parseJSON(safeData) {
                         //This is done to be able to send it to whichever view controller wants to make use of the weather data and they can do so by assiigning themselves as the delegate and using thr protocol as a data type
-                        self.delegate?.didUpdateWeather(weather: weather)
+                        self.delegate?.didUpdateWeather(self, weather: weather)
                     }
                 }
             }
@@ -74,7 +82,7 @@ struct WeatherManager {
      The parseJSOn method is made to return the weatherModel object we made so that wherever it is called can be stored and used
      Weatehr model return type is made an optional to cater for if something goes wrong and it returns nil
      */
-    func parseJSON(weatherData: Data) -> WeatherModel? {
+    func parseJSON(_ weatherData: Data) -> WeatherModel? {
         //create a decoder to decode the object received
         let decoder = JSONDecoder()
         
@@ -95,7 +103,7 @@ struct WeatherManager {
             let weather = WeatherModel(conditionID: id, temperature: temp, cityName: name)
             return weather
         } catch {
-            print(error)
+            delegate?.didFailWithError(error: error)
             return nil
         }
     }
